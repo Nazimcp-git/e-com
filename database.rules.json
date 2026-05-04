@@ -1,0 +1,39 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "products": {
+      ".read": "true",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$productId": {
+        "reviews": {
+          ".read": "true",
+          ".write": "auth != null",
+          "$reviewId": {
+            ".validate": "newData.hasChildren(['rating', 'text', 'userId', 'userName', 'createdAt']) && newData.child('userId').val() === auth.uid"
+          }
+        }
+      }
+    },
+    "orders": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$orderId": {
+        ".read": "data.child('uid').val() === auth.uid",
+        ".write": "newData.child('uid').val() === auth.uid"
+      }
+    },
+    "content": {
+      ".read": "true",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "coupons": {
+      ".read": "true",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    }
+  }
+}

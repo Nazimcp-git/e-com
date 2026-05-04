@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Diagnostic</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+</head>
+<body>
+  <div id="page-root"></div>
+  <pre id="log"></pre>
+  <script type="module">
+    window.onerror = function(msg, url, line, col, error) {
+      document.getElementById('log').innerHTML += `<span style="color:red">ERROR: ${msg}</span>\n`;
+    };
+    window.addEventListener('unhandledrejection', function(event) {
+      document.getElementById('log').innerHTML += `<span style="color:red">PROMISE REJECTION: ${event.reason}</span>\n`;
+    });
+
+    import { DB } from './js/firebase.js';
+    import renderAdmin from './js/pages/admin.js';
+    import Store from './js/store.js';
+
+    async function run() {
+      try {
+        Store._state.user = { isAdmin: true, uid: 'admin123' };
+        
+        document.getElementById('log').innerHTML += `Fetching products...\n`;
+        const products = await DB.getProducts();
+        document.getElementById('log').innerHTML += `Products: ${products.length}\n`;
+
+        document.getElementById('log').innerHTML += `Fetching orders...\n`;
+        // mock orders to bypass auth
+        const orders = []; 
+        document.getElementById('log').innerHTML += `Orders: ${orders.length}\n`;
+
+        // override DB.getAllOrders
+        DB.getAllOrders = async () => [];
+
+        document.getElementById('log').innerHTML += `Rendering admin...\n`;
+        await renderAdmin();
+        document.getElementById('log').innerHTML += `Done.\n`;
+        
+        // Wait and check if tabs work
+        setTimeout(() => {
+          document.querySelector('[data-tab="orders"]').click();
+          document.getElementById('log').innerHTML += `Clicked Orders tab.\n`;
+        }, 1000);
+
+      } catch(e) {
+        document.getElementById('log').innerHTML += `<span style="color:red">CATCH: ${e.stack}</span>\n`;
+      }
+    }
+    run();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Full App</title>
+</head>
+<body>
+  <script type="module">
+    import Store from './js/store.js';
+    import { initRouter } from './js/router.js';
+    import { loadAppData } from './js/app.js';
+    import renderAdmin from './js/pages/admin.js';
+    
+    async function test() {
+      console.log("TESTING FULL APP");
+      try {
+        await loadAppData();
+        Store._state.user = { isAdmin: true, uid: 'admin123' };
+        await renderAdmin();
+        console.log("SUCCESS");
+      } catch (e) {
+        console.error("TEST FAILED", e);
+      }
+    }
+    test();
+  </script>
+</body>
+</html>

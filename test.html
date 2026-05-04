@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Admin</title>
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+</head>
+<body>
+  <div id="page-root"></div>
+  <script type="module">
+    import renderAdmin from './js/pages/admin.js';
+    import Store from './js/store.js';
+    import { DB } from './js/firebase.js';
+    
+    Store._state.user = { isAdmin: true, uid: 'admin123' };
+    
+    // Mock DB calls
+    DB.getProducts = async () => [];
+    DB.getAllOrders = async () => [];
+    DB.getContent = async () => null;
+    DB.getAllCoupons = async () => [];
+    
+    renderAdmin().then(() => {
+      console.log("RENDER ADMIN COMPLETE");
+    }).catch(err => {
+      console.error("RUNTIME ERROR:", err);
+    });
+  </script>
+</body>
+</html>
